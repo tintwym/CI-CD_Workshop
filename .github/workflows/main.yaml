@@ -21,8 +21,6 @@ jobs:
         # Install Cosign
         - name: Install Cosign
           uses: sigstore/cosign-installer@v3.5.0
-        - name: Check install!
-          run: cosign version
 
         # Scan code for vulnerabilities with Trivy
         - name: Scan for Vulnerabilities
