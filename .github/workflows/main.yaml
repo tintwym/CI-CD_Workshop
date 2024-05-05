@@ -7,23 +7,23 @@ jobs:
   slackNotification:
     name: Slack Notification
     runs-on: ubuntu-latest
-    permissions: {}
+    permissions: 
+      contents: read
+      packages: write
+      id-token: write
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Run Trivy vulnerability scanner in repo mode
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        severity: 'CRITICAL'
-
+    - uses: actions/checkout@v3
     - name: Install Cosign
       uses: sigstore/cosign-installer@v3.5.0
       with:
         cosign-release: 'v2.2.4'
     - name: Check install!
       run: cosign version
+    - name: Run Trivy vulnerability scanner in repo mode
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        severity: 'CRITICAL'
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@v2
       env:
@@ -32,7 +32,7 @@ jobs:
           Name: Tint Wai Yan Min
           Matriculation: A0290835X
           Email: e1327866@u.nus.edu
-          GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+          GitHub: https://github.com/tintwym/CI-CD_Workshop
         SLACK_TITLE: "Image build and signed"
 
       
