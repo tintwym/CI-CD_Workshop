@@ -40,7 +40,8 @@ jobs:
         if: ${{ success() }}
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_TITLE: "Image build and signed"
+          SLACK_TITLE: Image build and signed
+          SLACK_MSG_AUTHOR: tintwym
           SLACK_MESSAGE: |
             Name: Tint Wai Yan Min
             Matriculation: A0290835X
@@ -68,3 +69,29 @@ jobs:
       #   with:
       #     push: true
       #     tags: tintwaiyanmin/ci-cd_workshop:${{github.sha}}
+
+      
+      # Send Slack Notification
+      - name: Slack Notification
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: Scan failed - Tint Wai Yan Min
+          SLACK_MSG_AUTHOR: tintwym
+          SLACK_MESSAGE: |
+            Name: Tint Wai Yan Min
+            Matriculation: A0290835X
+            Email: e1327866@u.nus.edu
+            GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name:  file upload
+        if: ${{ failure() }}
+        uses: MeilCli/slack-upload-file@v4
+        id: message
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'Users/andrewchen/Desktop/test.txt'
+          initial_comment: 'Upload by Tint Wai Yan Min'
