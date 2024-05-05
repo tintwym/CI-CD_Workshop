@@ -32,8 +32,8 @@ jobs:
             ignore-unfixed: true
             format: 'table'
             output: 'trivy-results.txt'
-            # severity: ${{vars.TRIVY_SEVERITY}}
-            severity: 'CRITICAL'
+            severity: ${{vars.TRIVY_SEVERITY}}
+            # severity: 'CRITICAL'
             exit-code: '1'
 
         # Send Slack Notification
@@ -63,13 +63,6 @@ jobs:
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-        - id: docker_meta
-          uses: docker/metadata-action@v4.4.0
-          with:
-            images: tintwaiyanmin97/cicdworkshop
-            tags: ${{github.sha}}
-        
         -
           name: Build and push
           uses: docker/build-push-action@v5
@@ -82,7 +75,7 @@ jobs:
           run: |
             cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
           env:
-            TAGS: ${{ steps.docker_meta.outputs.tags }}
+            TAGS: tintwaiyanmin97/cicdworkshop:${{github.sha}}
             COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
             COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
             DIGEST: ${{ steps.build-and-push.outputs.digest }}
