@@ -35,7 +35,7 @@ jobs:
             format: 'table'
             output: 'trivy-results.txt'
             # severity: ${{vars.TRIVY_SEVERITY}}
-            severity: 'CRITICAL'
+            severity: 'HIGH'
             exit-code: '1'
 
         # Send Slack Notification
@@ -91,23 +91,23 @@ jobs:
             COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
             DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
-        # # Send Slack Notification
-        # - name: Slack Notification
-        #   if: ${{ failure() }}
-        #   uses: rtCamp/action-slack-notify@v2
+        # Send Slack Notification
+        - name: Slack Notification
+          if: ${{ failure() }}
+          uses: rtCamp/action-slack-notify@v2
 
-        #   env:
-        #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-        #     SLACK_TITLE: Scan failed - Tint Wai Yan Min
-        #     SLACK_MSG_AUTHOR: tintwym
-        #     SLACK_MESSAGE: "Fail trivy scan, Check the report for details"
+          env:
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+            SLACK_TITLE: Scan failed - Tint Wai Yan Min
+            SLACK_MSG_AUTHOR: tintwym
+            SLACK_MESSAGE: "Fail trivy scan, Check the report for details"
 
-        # - name: file upload
-        #   if: ${{ failure() }}
-        #   uses: MeilCli/slack-upload-file@v3
-        #   with:
-        #     slack_token: ${{ secrets.SLACK_TOKEN }}
-        #     channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-        #     file_path: '/home/runner/work/CI-CD_Workshop/CI-CD_Workshop/trivy-results.txt'
-        #     initial_comment: 'Upload by Tint Wai Yan Min'
+        - name: file upload
+          if: ${{ failure() }}
+          uses: MeilCli/slack-upload-file@v3
+          with:
+            slack_token: ${{ secrets.SLACK_TOKEN }}
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            file_path: '/home/runner/work/CI-CD_Workshop/CI-CD_Workshop/trivy-results.txt'
+            initial_comment: 'Upload by Tint Wai Yan Min'
