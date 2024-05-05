@@ -10,7 +10,10 @@ jobs:
     name: Slack Notification
     if: (!contains(github.event.head_commit.message, '#NORUN'))
     runs-on: ubuntu-latest
-    permissions: {}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     steps:
         # Check out code
         - uses: actions/checkout@v3
