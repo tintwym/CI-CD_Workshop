@@ -6,9 +6,9 @@ on:
 
 
 jobs:
-  success_build:
+  slackNotification:
     # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'SUCCESS' it will run the workflow otherwise skip the workflow
-    if: ${{ vars.CONDITION == 'SUCCESS' && startsWith(github.event.head_commit.message, '#norun') != true }}
+    # if: ${{ vars.CONDITION == 'SUCCESS' && startsWith(github.event.head_commit.message, '#norun') != true }}
     runs-on: ubuntu-latest
     steps:
       # Check out code
