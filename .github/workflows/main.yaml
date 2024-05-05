@@ -32,8 +32,8 @@ jobs:
             ignore-unfixed: true
             format: 'table'
             output: 'trivy-results.txt'
-            severity: ${{vars.TRIVY_SEVERITY}}
-            # severity: 'CRITICAL'
+            # severity: ${{vars.TRIVY_SEVERITY}}
+            severity: 'CRITICAL'
             exit-code: '1'
 
         # Send Slack Notification
@@ -63,6 +63,13 @@ jobs:
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - id: docker_meta
+          uses: docker/metadata-action@v4.4.0
+          with:
+            images: tintwaiyanmin97/cicdworkshop
+            tags: ${{github.sha}}
+        
         -
           name: Build and push
           uses: docker/build-push-action@v5
@@ -75,7 +82,7 @@ jobs:
           run: |
             cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
           env:
-            TAGS: tintwaiyanmin97/cicdworkshop:${{github.sha}}
+            TAGS: ${{ steps.docker_meta.outputs.tags }}
             COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
             COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
             DIGEST: ${{ steps.build-and-push.outputs.digest }}
@@ -90,11 +97,7 @@ jobs:
         #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         #     SLACK_TITLE: Scan failed - Tint Wai Yan Min
         #     SLACK_MSG_AUTHOR: tintwym
-        #     SLACK_MESSAGE: |
-        #       Name: Tint Wai Yan Min
-        #       Matriculation: A0290835X
-        #       Email: e1327866@u.nus.edu
-        #       GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+        #     SLACK_MESSAGE: "Fail trivy scan, Check the report for details"
 
         # - name: file upload
         #   if: ${{ failure() }}
