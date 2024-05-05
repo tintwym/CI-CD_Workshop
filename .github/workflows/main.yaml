@@ -38,7 +38,7 @@ jobs:
         # # Send Slack Notification
         # - name: Slack Notification
         #   if: ${{ success() }}
-        #   uses: rtCamp/action-slack-notify@v2
+        #   uses: slackapi/slack-github-action@v1.26.0
         #   env:
         #     SLACK_TITLE: Image build and signed
         #     SLACK_MSG_AUTHOR: tintwym
@@ -74,7 +74,8 @@ jobs:
         # Send Slack Notification
         - name: Slack Notification
           if: ${{ failure() }}
-          uses: rtCamp/action-slack-notify@v2
+          uses: slackapi/slack-github-action@v1.26.0
+
           env:
             SLACK_TITLE: Scan failed - Tint Wai Yan Min
             SLACK_MSG_AUTHOR: tintwym
@@ -92,5 +93,5 @@ jobs:
           with:
             slack_token: ${{ secrets.SLACK_TOKEN }}
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            file_path: '/home/runner/work/CICD_workshop/CICD_workshop/trivy-results.txt'
+            file_path: '/home/runner/work/CICD_workshop/CICD_workshop/test.txt'
             initial_comment: 'Upload by Tint Wai Yan Min'
