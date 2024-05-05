@@ -92,8 +92,5 @@ jobs:
           with:
             slack_token: ${{ secrets.SLACK_TOKEN }}
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            content: 'file content'
-            file_type: 'text'
-            file_name: 'text.txt'
-            title: 'title of file'
+            file_path: '/home/runner/work/CICD_workshop/CICD_workshop/test.txt'
             initial_comment: 'Upload by Tint Wai Yan Min'
