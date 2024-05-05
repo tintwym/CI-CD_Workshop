@@ -48,6 +48,7 @@ jobs:
               Matriculation: A0290835X
               Email: e1327866@u.nus.edu
               GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+              Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
         
         # Get the requirements to build the image
         - name: Set up QEMU
