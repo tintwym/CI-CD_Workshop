@@ -15,8 +15,6 @@ RUN go build -o main ./...
 
 FROM alpine:${ALPINE_TAG}
 
-LABEL org.opencontainers.image.source=https://github.com/chukmunnlee/go-fortune
-
 WORKDIR /app
 
 RUN apk update && apk --no-cache add curl
