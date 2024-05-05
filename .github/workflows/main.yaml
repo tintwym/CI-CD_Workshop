@@ -94,5 +94,5 @@ jobs:
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
             content: 'file content'
             file_type: 'text'
-            file_path: 'text.txt'
+            file_path: './text.txt'
             initial_comment: 'Upload by Tint Wai Yan Min'
