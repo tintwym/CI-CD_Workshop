@@ -35,20 +35,20 @@ jobs:
             severity: 'CRITICAL'
             exit-code: '1'
 
-        # # Send Slack Notification
-        # - name: Slack Notification
-        #   if: ${{ success() }}
-        #   uses: rtCamp/action-slack-notify@v2
-        #   env:
-        #     SLACK_TITLE: Image build and signed
-        #     SLACK_MSG_AUTHOR: tintwym
-        #     SLACK_MESSAGE: |
-        #       Name: Tint Wai Yan Min
-        #       Matriculation: A0290835X
-        #       Email: e1327866@u.nus.edu
-        #       GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-        #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        # Send Slack Notification
+        - name: Slack Notification
+          if: ${{ success() }}
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_TITLE: Image build and signed
+            SLACK_MSG_AUTHOR: tintwym
+            SLACK_MESSAGE: |
+              Name: Tint Wai Yan Min
+              Matriculation: A0290835X
+              Email: e1327866@u.nus.edu
+              GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         
         # # Get the requirements to build the image
         # - name: Set up QEMU
