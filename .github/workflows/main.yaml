@@ -7,6 +7,7 @@ jobs:
   slackNotification:
     name: Slack Notification
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -15,17 +16,25 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
-        ignore-unfixed: true
-        format: 'table'
-        output: 'test.txt'
         severity: 'CRITICAL'
 
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@v3.5.0
+      with:
+        cosign-release: 'v2.2.4'
+    - name: Check install!
+      run: cosign version
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_WEBHOOK: ${{ secrets.SECRET_WEBHOOK_URL }}
-        SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-        SLACK_ICON: https://github.com/rtCamp.png?size=48
-        SLACK_MESSAGE: 'Post Content :rocket:'
-        SLACK_TITLE: Post Title
-        SLACK_USERNAME: rtCamp
+        SLACK_MESSAGE: |
+          Name: Tint Wai Yan Min
+          Matriculation: A0290835X
+          Email: e1327866@u.nus.edu
+          GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+        SLACK_TITLE: "Image build and signed"
+
+      
+
+      
