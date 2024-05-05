@@ -6,6 +6,7 @@ on:
 jobs:
   slackNotification:
     name: Slack Notification
+    if: (!contains(github.event.head_commit.message, '#NORUN'))
     runs-on: ubuntu-latest
     permissions: 
       contents: read
@@ -25,6 +26,7 @@ jobs:
         scan-type: 'fs'
         severity: 'CRITICAL'
     - name: Slack Notification
+      # if: ${{ success() }}
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_WEBHOOK: ${{ secrets.SECRET_WEBHOOK_URL }}
