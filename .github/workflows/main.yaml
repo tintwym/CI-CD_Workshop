@@ -26,7 +26,7 @@ jobs:
         scan-type: 'fs'
         severity: 'CRITICAL'
     - name: Slack Notification
-      # if: ${{ success() }}
+      if: ${{ success() }}
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_WEBHOOK: ${{ secrets.SECRET_WEBHOOK_URL }}
