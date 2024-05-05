@@ -32,24 +32,24 @@ jobs:
             ignore-unfixed: true
             format: 'table'
             output: 'trivy-results.txt'
-            severity: ${{vars.TRIVY_SEVERITY}}
-            # severity: 'CRITICAL'
+            # severity: ${{vars.TRIVY_SEVERITY}}
+            severity: 'CRITICAL'
             exit-code: '1'
 
-        # Send Slack Notification
-        - name: Slack Notification
-          if: ${{ success() }}
-          uses: rtCamp/action-slack-notify@v2
-          env:
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-            SLACK_TITLE: Image build and signed
-            SLACK_MSG_AUTHOR: tintwym
-            SLACK_MESSAGE: |
-              Name: Tint Wai Yan Min
-              Matriculation: A0290835X
-              Email: e1327866@u.nus.edu
-              GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+        # # Send Slack Notification
+        # - name: Slack Notification
+        #   if: ${{ success() }}
+        #   uses: rtCamp/action-slack-notify@v2
+        #   env:
+        #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        #     SLACK_TITLE: Image build and signed
+        #     SLACK_MSG_AUTHOR: tintwym
+        #     SLACK_MESSAGE: |
+        #       Name: Tint Wai Yan Min
+        #       Matriculation: A0290835X
+        #       Email: e1327866@u.nus.edu
+        #       GitHub: https://github.com/tintwym/CI-CD_Workshop.git
         
         # Get the requirements to build the image
         - name: Set up QEMU
