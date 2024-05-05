@@ -32,7 +32,8 @@ jobs:
             ignore-unfixed: true
             format: 'table'
             output: 'trivy-results.txt'
-            severity: ${{vars.TRIVY_SEVERITY}}
+            # severity: ${{vars.TRIVY_SEVERITY}}
+            severity: 'CRITICAL'
             exit-code: '1'
 
         # Send Slack Notification
@@ -63,13 +64,11 @@ jobs:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-        - name: Build and push
-          uses: docker/build-push-action@v5
-          id: build-and-push
+        - id: docker_meta
+          uses: docker/metadata-action@v4.4.0
           with:
-            push: true
-            tags: tintwaiyanmin/ci-cd_workshop:${{github.sha}}
-
+            images: tintwaiyanmin97/cicdworkshop
+            tags: ${{github.sha}}
         
         # # Send Slack Notification
         # - name: Slack Notification
