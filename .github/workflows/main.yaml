@@ -2,10 +2,13 @@ name: Build and Push
 on:
   push:
     branches:
-      - master
+      - v[0-9]+.[0-9]+
+
+
 jobs:
   slackNotification:
     name: Slack Notification
+    if: (!contains(github.event.head_commit.message, '#NORUN'))
     runs-on: ubuntu-latest
     permissions: 
       contents: read
@@ -21,7 +24,9 @@ jobs:
       uses: sigstore/cosign-installer@v3.5.0
       with:
         cosign-release: 'v2.2.4'
-    - name: Run Trivy vulnerability scanner in repo mode
+
+    # Scan code for vulnerabilities with Trivy
+    - name: Scan for Vulnerabilities
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
@@ -30,6 +35,7 @@ jobs:
     # Send Slack Notification
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@v2
+
       env:
         SLACK_TITLE: "Image build and signed"
         SLACK_MESSAGE: |
