@@ -38,8 +38,10 @@ jobs:
         # # Send Slack Notification
         # - name: Slack Notification
         #   if: ${{ success() }}
-        #   uses: slackapi/slack-github-action@v1.26.0
+        #   uses: rtCamp/action-slack-notify@v2
         #   env:
+        #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         #     SLACK_TITLE: Image build and signed
         #     SLACK_MSG_AUTHOR: tintwym
         #     SLACK_MESSAGE: |
@@ -47,8 +49,6 @@ jobs:
         #       Matriculation: A0290835X
         #       Email: e1327866@u.nus.edu
         #       GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-        #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         
         # # Get the requirements to build the image
         # - name: Set up QEMU
@@ -74,9 +74,11 @@ jobs:
         # Send Slack Notification
         - name: Slack Notification
           if: ${{ failure() }}
-          uses: slackapi/slack-github-action@v1.26.0
+          uses: rtCamp/action-slack-notify@v2
 
           env:
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
             SLACK_TITLE: Scan failed - Tint Wai Yan Min
             SLACK_MSG_AUTHOR: tintwym
             SLACK_MESSAGE: |
@@ -84,8 +86,6 @@ jobs:
               Matriculation: A0290835X
               Email: e1327866@u.nus.edu
               GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
         - name: file upload
           if: ${{ failure() }}
