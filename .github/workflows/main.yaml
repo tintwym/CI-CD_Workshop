@@ -89,9 +89,9 @@ jobs:
 
         - name: file upload
           if: ${{ failure() }}
-          uses: MeilCli/slack-upload-file@v4
+          uses: MeilCli/slack-upload-file@v3
           with:
             slack_token: ${{ secrets.SLACK_TOKEN }}
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            file_path: '/home/runner/work/CICD_workshop/CICD_workshop/test.txt'
+            file_path: 'trivy-results.txt'
             initial_comment: 'Upload by Tint Wai Yan Min'
