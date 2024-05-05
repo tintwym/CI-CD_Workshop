@@ -63,36 +63,44 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-  # fail_build:
-  #     # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'FAIL' it will run the workflow otherwise skip the workflow
-  #     if: ${{ vars.CONDITION == 'FAIL' && startsWith(github.event.head_commit.message, '#norun') != true }}
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #     # Check out code
-  #     - name: Check out the code
-  #       uses: actions/checkout@v3
+  fail_build:
+      # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'FAIL' it will run the workflow otherwise skip the workflow
+      if: ${{ vars.CONDITION == 'FAIL' && startsWith(github.event.head_commit.message, '#norun') != true }}
+      runs-on: ubuntu-latest
+      steps:
+      # Check out code
+      - name: Check out the code
+        uses: actions/checkout@v3
 
-  #     # Scan code for vulnerabilities with Trivy
-  #     - name: Scan for Vulnerabilities
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         scan-type: 'fs'
-  #         ignore-unfixed: true
-  #         format: 'table'
-  #         output: 'trivy-results.txt'
-  #         severity: 'HIGH'
+      # Scan code for vulnerabilities with Trivy
+      - name: Scan for Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          output: 'trivy-results.txt'
+          severity: 'HIGH'
 
-  #     # Send Slack Notification
-  #     - name: Slack Notification
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env:
-  #         SLACK_TITLE: "Image build and signed"
-  #         SLACK_MESSAGE: |
-  #           Name: Tint Wai Yan Min
-  #           Matriculation: A0290835X
-  #           Email: e1327866@u.nus.edu
-  #           GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      # Send Slack Notification
+      - name: Send slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: "Scan failed"
+          SLACK_MESSAGE: |
+            Name: Tint Wai Yan Min
+            Matriculation: A0290835X
+            Email: e1327866@u.nus.edu
+            GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # Upload file to slack
+      - uses: MeilCli/slack-upload-file@v4
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'trivy-results.txt'
+          initial_comment: 'Scan report by Tint Wai Yan Min'
       
 
       
