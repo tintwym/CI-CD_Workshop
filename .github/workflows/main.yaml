@@ -6,75 +6,75 @@ on:
 
 
 jobs:
-  # success_build:
-  #   # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'SUCCESS' it will run the workflow otherwise skip the workflow
-  #   if: ${{ vars.CONDITION == 'SUCCESS' && startsWith(github.event.head_commit.message, '#norun') != true }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   # Check out the code
-  #   - name: Check out the code
-  #     uses: actions/checkout@v3
+  success_build:
+    # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'SUCCESS' it will run the workflow otherwise skip the workflow
+    if: ${{ vars.CONDITION == 'SUCCESS' && startsWith(github.event.head_commit.message, '#norun') != true }}
+    runs-on: ubuntu-latest
+    steps:
+    # Check out the code
+    - name: Check out the code
+      uses: actions/checkout@v3
 
-  #   # Scan for Vulnerabilities with Trivy
-  #   - name: Scan for Vulnerabilities
-  #     uses: aquasecurity/trivy-action@master
-  #     with:
-  #       scan-type: 'fs'
-  #       severity: 'CRITICAL'
+    # Scan for Vulnerabilities with Trivy
+    - name: Scan for Vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        severity: 'CRITICAL'
 
-  #   # Get the requirements to build the image
-  #   - name: Set up QEMU
-  #     id: docker
-  #     uses: docker/setup-qemu-action@v3
+    # Get the requirements to build the image
+    - name: Set up QEMU
+      id: docker
+      uses: docker/setup-qemu-action@v3
 
-  #   - name: Set up Docker Buildx
-  #     uses: docker/setup-buildx-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
     
-  #   # Login to docker
-  #   - name: Login to Docker Hub
-  #     uses: docker/login-action@v3
-  #     with:
-  #       username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #       password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    # Login to docker
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
     
-  #   # Build and push the image
-  #   - name: Build and push
-  #     uses: docker/build-push-action@v5
-  #     id: build-and-push
-  #     with:
-  #       push: true
-  #       tags: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
+    # Build and push the image
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      id: build-and-push
+      with:
+        push: true
+        tags: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
 
-  #   # Install Cosign
-  #   - name: Install cosign
-  #     uses: sigstore/cosign-installer@2.2.0
-  #     with:
-  #       cosign-release: 'v2.2.0'
+    # Install Cosign
+    - name: Install cosign
+      uses: sigstore/cosign-installer@3.5.0
+      with:
+        cosign-release: 'v2.2.4'
 
-  #   # Sign image with a key
-  #   - name: Sign image with a key
-  #     run: |
-  #       cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-  #     env:
-  #       TAGS: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
-  #       COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-  #       COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-  #       DIGEST: ${{ steps.build-and-push.outputs.digest }}
+    # Sign image with a key
+    - name: Sign image with a key
+      run: |
+        cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+      env:
+        TAGS: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
+        COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
-  #   # Send Slack Notification
-  #   - name: Slack Notification
-  #     if: ${{ success() }}
-  #     uses: rtCamp/action-slack-notify@v2
-  #     env:
-  #       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-  #       SLACK_TITLE: "Image build and signed"
-  #       SLACK_MSG_AUTHOR: tintwym
-  #       SLACK_MESSAGE: |
-  #         Name: Tint Wai Yan Min
-  #         Matriculation: A0290835X
-  #         Email: e1327866@u.nus.edu
-  #         GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-  #         Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
+    # Send Slack Notification
+    - name: Slack Notification
+      if: ${{ success() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_TITLE: "Image build and signed"
+        SLACK_MSG_AUTHOR: tintwym
+        SLACK_MESSAGE: |
+          Name: Tint Wai Yan Min
+          Matriculation: A0290835X
+          Email: e1327866@u.nus.edu
+          GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+          Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
   # fail_build:
   #   # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'SUCCESS' it will run the workflow otherwise skip the workflow
   #   if: ${{ vars.CONDITION == 'FAIL' && startsWith(github.event.head_commit.message, '#norun') != true }}
@@ -83,86 +83,115 @@ jobs:
   #   # Check out the code
   #   - name: Check out the code
   #     uses: actions/checkout@v3
-  slackNotification:
-    name: Slack Notification
-    if: (!contains(github.event.head_commit.message, '#NORUN'))
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-        # Check out code
-        - uses: actions/checkout@v3
 
-        # Install Cosign
-        - name: Install Cosign
-          uses: sigstore/cosign-installer@v3.5.0
+  #   # Scan for Vulnerabilities with Trivy 
+  #   - name: Scan for Vulnerabilities
+  #     uses: aquasecurity/trivy-action@master
+  #     with:
+  #       scan-type: 'fs'
+  #       ignore-unfixed: true
+  #       format: 'table'
+  #       output: 'trivy-results.txt'
+  #       severity: 'HIGH'
 
-        # Scan code for vulnerabilities with Trivy
-        - name: Scan for Vulnerabilities
-          uses: aquasecurity/trivy-action@master
-          with:
-            scan-type: 'fs'
-            ignore-unfixed: true
-            format: 'table'
-            output: 'trivy-results.txt'
-            # severity: ${{vars.TRIVY_SEVERITY}}
-            severity: 'CRITICAL'
-            exit-code: '1'
+  #   # Send Slack notification
+  #   - name: Send GitHub Action trigger data to Slack workflow
+  #     uses: rtCamp/action-slack-notify@v2
+  #     env:
+  #         SLACK_COLOR: '#FF0000'
+  #         SLACK_TITLE: "Scan failed - Tint Wai Yan Min"
+  #         SLACK_MESSAGE: |
+  #           Failed trivy scan, see uploaded report
+  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-        # Send Slack Notification
-        - name: Slack Notification
-          if: ${{ success() }}
-          uses: rtCamp/action-slack-notify@v2
-          env:
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-            SLACK_TITLE: Image build and signed
-            SLACK_MSG_AUTHOR: tintwym
-            SLACK_MESSAGE: |
-              Name: Tint Wai Yan Min
-              Matriculation: A0290835X
-              Email: e1327866@u.nus.edu
-              GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-              Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
+  #   # Upload file to Slack
+  #   - uses: MeilCli/slack-upload-file@v3
+  #     with:
+  #       slack_token: ${{ secrets.SLACK_TOKEN }}
+  #       channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+  #       file_path: 'trivy-results.txt'
+  #       initial_comment: 'Scan report by Tint Wai Yan Min'
+
+  # slackNotification:
+  #   name: Slack Notification
+  #   if: (!contains(github.event.head_commit.message, '#NORUN'))
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     id-token: write
+  #   steps:
+  #       # Check out code
+  #       - uses: actions/checkout@v3
+
+  #       # Install Cosign
+  #       - name: Install Cosign
+  #         uses: sigstore/cosign-installer@v3.5.0
+
+  #       # Scan code for vulnerabilities with Trivy
+  #       - name: Scan for Vulnerabilities
+  #         uses: aquasecurity/trivy-action@master
+  #         with:
+  #           scan-type: 'fs'
+  #           ignore-unfixed: true
+  #           format: 'table'
+  #           output: 'trivy-results.txt'
+  #           # severity: ${{vars.TRIVY_SEVERITY}}
+  #           severity: 'CRITICAL'
+  #           exit-code: '1'
+
+  #       # Send Slack Notification
+  #       - name: Slack Notification
+  #         if: ${{ success() }}
+  #         uses: rtCamp/action-slack-notify@v2
+  #         env:
+  #           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  #           SLACK_TITLE: Image build and signed
+  #           SLACK_MSG_AUTHOR: tintwym
+  #           SLACK_MESSAGE: |
+  #             Name: Tint Wai Yan Min
+  #             Matriculation: A0290835X
+  #             Email: e1327866@u.nus.edu
+  #             GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+  #             Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
         
-        # Get the requirements to build the image
-        - name: Set up QEMU
-          uses: docker/setup-qemu-action@v3
+  #       # Get the requirements to build the image
+  #       - name: Set up QEMU
+  #         uses: docker/setup-qemu-action@v3
 
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
+  #       - name: Set up Docker Buildx
+  #         uses: docker/setup-buildx-action@v3
 
-        - name: Login to Docker Hub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #       - name: Login to Docker Hub
+  #         uses: docker/login-action@v3
+  #         with:
+  #           username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-        - id: docker_meta
-          uses: docker/metadata-action@v4.4.0
-          with:
-            images: tintwaiyanmin97/cicdworkshop
-            tags: ${{github.sha}}
+  #       - id: docker_meta
+  #         uses: docker/metadata-action@v4.4.0
+  #         with:
+  #           images: tintwaiyanmin97/cicdworkshop
+  #           tags: ${{github.sha}}
         
-        -
-          name: Build and push
-          uses: docker/build-push-action@v5
-          id: build-and-push
-          with:
-            push: true
-            tags: ${{ steps.docker_meta.outputs.tags }}
+  #       -
+  #         name: Build and push
+  #         uses: docker/build-push-action@v5
+  #         id: build-and-push
+  #         with:
+  #           push: true
+  #           tags: ${{ steps.docker_meta.outputs.tags }}
         
-        # Sign image with a key
-        - name: Sign image with a key
-          run: |
-            cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-          env:
-            TAGS: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
-            COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-            COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-            DIGEST: ${{ steps.build-and-push.outputs.digest }}
+  #       # Sign image with a key
+  #       - name: Sign image with a key
+  #         run: |
+  #           cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+  #         env:
+  #           TAGS: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
+  #           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+  #           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+  #           DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
         # # Send Slack Notification
         # - name: Slack Notification
