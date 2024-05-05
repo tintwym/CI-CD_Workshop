@@ -7,13 +7,9 @@ on:
 
 jobs:
   success_build:
-    
-    if: (!contains(github.event.head_commit.message, '#NORUN'))
+    # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'SUCCESS' it will run the workflow otherwise skip the workflow
+    if: ${{ vars.CONDITION == 'SUCCESS' && startsWith(github.event.head_commit.message, '#norun') != true }}
     runs-on: ubuntu-latest
-    permissions: 
-      contents: read
-      packages: write
-      id-token: write
     steps:
     # Check out code
     - name: Check out the code
@@ -30,21 +26,68 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
+        ignore-unfixed: true
+        format: 'table'
+        output: 'trivy-results.txt'
         severity: 'CRITICAL'
+
+    # Get the requirements to build the image
+    - name: Set up QEMU
+      id: docker
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    # Login to docker
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     # Send Slack Notification
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@v2
-
       env:
         SLACK_TITLE: "Image build and signed"
         SLACK_MESSAGE: |
           Name: Tint Wai Yan Min
           Matriculation: A0290835X
           Email: e1327866@u.nus.edu
-          GitHub: https://github.com/tintwym/CI-CD_Workshop
+          GitHub: https://github.com/tintwym/CI-CD_Workshop.git
         SLACK_WEBHOOK: ${{ secrets.SECRET_WEBHOOK_URL }}
 
+  fail_build:
+    # Check if the commit message contains #norun and if it does, skip the workflow and if CONDITION is set 'FAIL' it will run the workflow otherwise skip the workflow
+    if: ${{ vars.CONDITION == 'FAIL' && startsWith(github.event.head_commit.message, '#norun') != true }}
+    runs-on: ubuntu-latest
+    steps:
+    # Check out code
+    - name: Check out the code
+      uses: actions/checkout@v3
+
+    # Scan code for vulnerabilities with Trivy
+    - name: Scan for Vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        ignore-unfixed: true
+        format: 'table'
+        output: 'trivy-results.txt'
+        severity: 'HIGH'
+
+    # Send Slack Notification
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_TITLE: "Image build and signed"
+        SLACK_MESSAGE: |
+          Name: Tint Wai Yan Min
+          Matriculation: A0290835X
+          Email: e1327866@u.nus.edu
+          GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+        SLACK_WEBHOOK: ${{ secrets.SECRET_WEBHOOK_URL }}
       
 
       
