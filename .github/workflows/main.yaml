@@ -35,79 +35,79 @@ jobs:
             format: 'table'
             output: 'trivy-results.txt'
             # severity: ${{vars.TRIVY_SEVERITY}}
-            severity: 'CRITICAL'
+            severity: 'HIGH'
             exit-code: '1'
-
-        # Send Slack Notification
-        - name: Slack Notification
-          if: ${{ success() }}
-          uses: rtCamp/action-slack-notify@v2
-          env:
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-            SLACK_TITLE: Scan Success - Tint Wai Yan Min
-            SLACK_MSG_AUTHOR: tintwym
-            SLACK_MESSAGE: |
-              Name: Tint Wai Yan Min
-              Matriculation: A0290835X
-              Email: e1327866@u.nus.edu
-              GitHub: https://github.com/tintwym/CI-CD_Workshop.git
-              Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
-        
-        # Get the requirements to build the image
-        - name: Set up QEMU
-          uses: docker/setup-qemu-action@v3
-
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
-
-        - name: Login to Docker Hub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-        - id: docker_meta
-          uses: docker/metadata-action@v4.4.0
-          with:
-            images: tintwaiyanmin97/cicdworkshop
-            tags: ${{github.sha}}
-        
-        -
-          name: Build and push
-          uses: docker/build-push-action@v5
-          id: build-and-push
-          with:
-            push: true
-            tags: ${{ steps.docker_meta.outputs.tags }}
-        
-        # Sign image with a key
-        - name: Sign image with a key
-          run: |
-            cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-          env:
-            TAGS: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
-            COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-            COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-            DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
         # # Send Slack Notification
         # - name: Slack Notification
-        #   if: ${{ failure() }}
+        #   if: ${{ success() }}
         #   uses: rtCamp/action-slack-notify@v2
-
         #   env:
         #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-        #     SLACK_TITLE: Scan failed - Tint Wai Yan Min
+        #     SLACK_TITLE: Scan Success - Tint Wai Yan Min
         #     SLACK_MSG_AUTHOR: tintwym
-        #     SLACK_MESSAGE: "Fail trivy scan, Check the report for details"
+        #     SLACK_MESSAGE: |
+        #       Name: Tint Wai Yan Min
+        #       Matriculation: A0290835X
+        #       Email: e1327866@u.nus.edu
+        #       GitHub: https://github.com/tintwym/CI-CD_Workshop.git
+        #       Docker: https://hub.docker.com/repository/docker/tintwaiyanmin97/cicdworkshop/
+        
+        # # Get the requirements to build the image
+        # - name: Set up QEMU
+        #   uses: docker/setup-qemu-action@v3
 
-        # - name: file upload
-        #   if: ${{ failure() }}
-        #   uses: MeilCli/slack-upload-file@v3
+        # - name: Set up Docker Buildx
+        #   uses: docker/setup-buildx-action@v3
+
+        # - name: Login to Docker Hub
+        #   uses: docker/login-action@v3
         #   with:
-        #     slack_token: ${{ secrets.SLACK_TOKEN }}
-        #     channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-        #     file_path: '/home/runner/work/CI-CD_Workshop/CI-CD_Workshop/trivy-results.txt'
-        #     initial_comment: 'Upload by Tint Wai Yan Min'
+        #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+        #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        # - id: docker_meta
+        #   uses: docker/metadata-action@v4.4.0
+        #   with:
+        #     images: tintwaiyanmin97/cicdworkshop
+        #     tags: ${{github.sha}}
+        
+        # -
+        #   name: Build and push
+        #   uses: docker/build-push-action@v5
+        #   id: build-and-push
+        #   with:
+        #     push: true
+        #     tags: ${{ steps.docker_meta.outputs.tags }}
+        
+        # # Sign image with a key
+        # - name: Sign image with a key
+        #   run: |
+        #     cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+        #   env:
+        #     TAGS: tintwaiyanmin97/cicdworkshop:${{ github.sha }}
+        #     COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        #     COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
+        # Send Slack Notification
+        - name: Slack Notification
+          if: ${{ failure() }}
+          uses: rtCamp/action-slack-notify@v2
+
+          env:
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+            SLACK_TITLE: Scan failed - Tint Wai Yan Min
+            SLACK_MSG_AUTHOR: tintwym
+            SLACK_MESSAGE: "Fail trivy scan, Check the report for details"
+
+        - name: file upload
+          if: ${{ failure() }}
+          uses: MeilCli/slack-upload-file@v3
+          with:
+            slack_token: ${{ secrets.SLACK_TOKEN }}
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            file_path: '/home/runner/work/CI-CD_Workshop/CI-CD_Workshop/trivy-results.txt'
+            initial_comment: 'Upload by Tint Wai Yan Min'
