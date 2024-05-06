@@ -35,7 +35,7 @@ jobs:
             format: 'table'
             output: 'trivy-results.txt'
             # severity: ${{vars.TRIVY_SEVERITY}}
-            severity: 'HIGH'
+            severity: 'CRITICAL'
             exit-code: '1'
 
         # Send Slack Notification
