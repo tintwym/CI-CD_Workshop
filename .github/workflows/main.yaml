@@ -45,7 +45,7 @@ jobs:
           env:
             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
             SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-            SLACK_TITLE: Image build and signed
+            SLACK_TITLE: Scan Success - Tint Wai Yan Min
             SLACK_MSG_AUTHOR: tintwym
             SLACK_MESSAGE: |
               Name: Tint Wai Yan Min
