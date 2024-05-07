@@ -97,7 +97,7 @@ jobs:
           env:
             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
             SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-            SLACK_COLOR: '#FF000'
+            SLACK_COLOR: '#FF0000'
             SLACK_TITLE: Scan failed - Tint Wai Yan Min
             SLACK_MSG_AUTHOR: tintwym
             SLACK_MESSAGE: "Fail trivy scan, Check the report for details"
